@@ -42,14 +42,14 @@ local button2W, button2H = 50, 50
 local tableBounds ={}
 
 local uiToggleCommand = GetActionCommandIDByFilename("Marini_ReaLink_Ui_Toggle.lua",0)
+local uiToggleCommandId = reaper.NamedCommandLookup(uiToggleCommand)
 
-local saveFileName = ".reaper_link_tracklist.txt"
 
 function parseTracks()
   
   local _,size = reaper.GetProjExtState(0, pluginName, "nLinks")
   
-  reaper.ShowConsoleMsg(size)
+  --reaper.ShowConsoleMsg(size)
   if size=="" then return end
 
   for linkIndex = 1, tonumber(size) do
@@ -71,11 +71,11 @@ function saveState()
   reaper.SetProjExtState(0, pluginName, "nLinks", tostring(#linkPairs))
   for i, pair in ipairs(linkPairs) do
     
-    reaper.ShowConsoleMsg(tostring(i))
+    --reaper.ShowConsoleMsg(tostring(i))
     local n1 = string.format("%.0f", reaper.GetMediaTrackInfo_Value(pair[1], "IP_TRACKNUMBER")-1)
     local n2 = string.format("%.0f", reaper.GetMediaTrackInfo_Value(pair[2], "IP_TRACKNUMBER")-1)
     reaper.SetProjExtState(0, pluginName, tostring(i), "{"..n1..","..n2.."}")
-    reaper.ShowConsoleMsg("{"..n1..","..n2.."}\n")
+    --reaper.ShowConsoleMsg("{"..n1..","..n2.."}\n")
   end
   --file:close()
   reaper.Main_SaveProject(0,false)
@@ -283,15 +283,18 @@ end
 
 
 local prevToggle =  reaper.GetToggleCommandState(reaper.NamedCommandLookup(uiToggleCommand))
+local prevChar = gfx.getchar()
 local function checkForToggleUi()
   local toggle = reaper.GetToggleCommandState(reaper.NamedCommandLookup(uiToggleCommand))
   if toggle == 1 and prevToggle == 0 then 
     gfx.init("Links")
   elseif toggle == 0 and prevToggle == 1 then 
     gfx.quit()
-  elseif gfx.getchar() == -1 then 
+  elseif gfx.getchar() == -1 and prevChar == 0 then 
     reaper.SetToggleCommandState(0, reaper.NamedCommandLookup(uiToggleCommand), 0)
+    reaper.RefreshToolbar(uiToggleCommandId)
   end
+  prevChar = gfx.getchar()
   prevToggle = toggle
 end
 
@@ -317,7 +320,8 @@ function drawLoop()
   
   gfx.update()
   checkForToggleUi()
-
+  
+  --reaper.ShowConsoleMsg(gfx.ext_retina)
   reaper.defer(drawLoop)
 end
 
