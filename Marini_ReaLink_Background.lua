@@ -137,21 +137,32 @@ function tableView()
       tableBounds.width - 2 * innerPadding,
       rowHeight)
   end
+  
+  local removeDeletedTracks = {}
+  for i, pair in ipairs(linkPairs) do
+    if reaper.ValidatePtr(pair[1], "MediaTrack*") and  
+    reaper.ValidatePtr(pair[2], "MediaTrack*") then 
+      table.insert(removeDeletedTracks, pair)
+    end
+  end
+  linkPairs = removeDeletedTracks
 
   gfx.set(1, 1, 1)
   local maxTrackNameLength = -1
 
-  for _, pair in ipairs(linkPairs) do
-    local _, masterTrack = reaper.GetTrackName(pair[1])
+  
+  for i, pair in ipairs(linkPairs) do
+    
+      local _, masterTrack = reaper.GetTrackName(pair[1])
 
-    if gfx.measurestr(masterTrack) > maxTrackNameLength then
-      maxTrackNameLength = gfx.measurestr(masterTrack)
-    end
+      if gfx.measurestr(masterTrack) > maxTrackNameLength then
+        maxTrackNameLength = gfx.measurestr(masterTrack)
+      end
+
   end
 
   for i, pair in ipairs(linkPairs) do
-    if reaper.ValidatePtr(pair[1], "MediaTrack*") and
-        reaper.ValidatePtr(pair[2], "MediaTrack*") then
+
       local masterTrack, slaveTrack = pair[1], pair[2]
       local _, masterTrackName = reaper.GetTrackName(masterTrack)
       local _, slaveTrackName = reaper.GetTrackName(slaveTrack)
@@ -190,9 +201,7 @@ function tableView()
           end
         end
       end
-    else
-      table.remove(linkPairs, i)
-    end
+      
   end
 
   gfx.set(0.15, 0.15, 0.15)
@@ -372,16 +381,16 @@ local function checkForSaves()
 end
 
 local function quit()
-  local file = io.open("/Users/mattia/Desktop/prova.txt", "w")
+  --local file = io.open("/Users/mattia/Desktop/prova.txt", "w")
 
   --reaper.ShowConsoleMsg("1")
   --reaper.SetToggleCommandState(0, uiToggleCommandId, 0)
   --reaper.ShowConsoleMsg("\ncarattere:" .. gfx.getchar() .. "\n")
     local d,x,y,w,h=gfx.dock(-1,0,0,0,0)
   if not (x == 0 and y == 0 and w == 0 and h == 0) then 
-  reaper.ShowConsoleMsg("2")
-    file:write("GUI aperta ")
-    file:write(d,x,y,w,h)
+  --reaper.ShowConsoleMsg("2")
+    --file:write("GUI aperta ")
+    --file:write(d,x,y,w,h)
     local d,x,y,w,h=gfx.dock(-1,0,0,0,0)
     reaper.SetExtState(pluginName,"dock",d,true)
     reaper.SetExtState(pluginName,"wndx",x,true)
@@ -390,15 +399,15 @@ local function quit()
     reaper.SetExtState(pluginName,"wndh",h,true)
     gfx.quit()
   elseif windowSize then 
-  reaper.ShowConsoleMsg("3")
-    file:write("GUI chiusa")
+  --reaper.ShowConsoleMsg("3")
+    --file:write("GUI chiusa")
     reaper.SetExtState(pluginName,"dock",windowSize.d,true)
     reaper.SetExtState(pluginName,"wndx",windowSize.x,true)
     reaper.SetExtState(pluginName,"wndy",windowSize.y,true)
     reaper.SetExtState(pluginName,"wndw",windowSize.w,true)
     reaper.SetExtState(pluginName,"wndh",windowSize.h,true)
   end
-  file:close()
+  --file:close()
 end
 
 local function setup()
