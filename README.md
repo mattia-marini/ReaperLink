@@ -1,13 +1,18 @@
 # ReaperLink
-~~Simple~~ Not so simple lua script to link fx parameters across different tracks in reaper. 
+Lua script to link fx parameters across different tracks in reaper. 
 
 ## Installation
-Install like any other script. The only note is that you should put the `__startup.lua` file in the script folder if you want the background syncing task to automatically start on reaper lanuch
+You can install this adding [this repo] in ReaPack, or manually:
 
-1. Put `Marini_ReaLink_Background.lua` and `Marini_ReaLink_Ui_Toggle.lua` wherever you want (script folder or subdirectory)
-2. Put `__startup.lua` <b>in the script folder</b>, inside the reaper resource path (<i>Options -> Show REAPER resource path in explorer/finder...</i>)
-3. Add the scripts in reaper (<i>Actions -> Show action list...</i>)
-4. Restart Reaper and you are now ready to go! You should use the `Marini_ReaLink_Ui_Toggle.lua` command to show/hide the plugin GUI, either through shortcut or putting it in a toolbar
+1. Put `Marini_ReaLink_Background.lua`, `Marini_ReaLink_Ui_Toggle.lua` and `Marini_ReaLink_Toggle_Autostart.lua` wherever you want (script folder or subdirectory)
+2. Add the scripts in reaper (<i>Actions -> Show action list...</i>)
+
+## Usage
+1. Start the background syncing task with `Marini_ReaLink_Background.lua`. Open/close ui with `Marini_ReaLink_Ui_Toggle.lua`*. Add/remove links from the UI
+2. If you want to avoid needing to start the background task on each startup, run `Marini_ReaLink_Toggle_Autostart.lua`. Disable this behaviour with the same action
+3. Open UI, select the 2 tracks on which you want the FX params to be linked, press link. To unlink, select the track pair on the script UI and press the "-" button
+
+*note that in order for the UI to show you need to have `Marini_ReaLink_Background.lua` running 
 
 You can find more detailed instruction in the pdf in this repo
 
