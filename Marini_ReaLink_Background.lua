@@ -1,3 +1,6 @@
+-- @noindex
+
+
 local count = 0
 function GetActionCommandIDByFilename(searchfilename)
   for k in io.lines(reaper.GetResourcePath() .. "/reaper-kb.ini") do
@@ -91,7 +94,7 @@ local function parseTracks(project)
       local masterGUID, slaveGUID = string.match(link, "(%S+),"), string.match(link, ",(%S+)")
 
       local master, slave = allTracks[masterGUID], allTracks[slaveGUID]
-      
+
       --reaper.ShowConsoleMsg(masterGUID .. " ".. slaveGUID .. "\n")
       if master and slave then
         --reaper.ShowConsoleMsg("carico traccia\n")
@@ -367,12 +370,12 @@ local prevToggle = reaper.GetToggleCommandState(uiToggleCommandId)
 local prevChar = gfx.getchar()
 
 local function updateWindowSize()
-    local d, x, y, w, h = gfx.dock(-1, 0, 0, 0, 0)
-    if not (x == 0 and y == 0 and w == 0 and h == 0) then
-      windowSize = { d = d, x = x, y = y, w = w, h = h }
-    else 
-      windowSize = nil
-    end
+  local d, x, y, w, h = gfx.dock(-1, 0, 0, 0, 0)
+  if not (x == 0 and y == 0 and w == 0 and h == 0) then
+    windowSize = { d = d, x = x, y = y, w = w, h = h }
+  else
+    windowSize = nil
+  end
 end
 
 local function checkForToggleUi()
@@ -390,14 +393,14 @@ local function checkForToggleUi()
       firstInit = false
     end
   elseif toggle == 0 and prevToggle == 1 then
-    if not firstInit then 
+    if not firstInit then
       updateWindowSize()
     end
     gfx.quit()
   elseif gfx.getchar() ~= prevChar and gfx.getchar() == -1 then
     reaper.SetToggleCommandState(0, uiToggleCommandId, 0)
     reaper.RefreshToolbar(uiToggleCommandId)
-    if not firstInit then 
+    if not firstInit then
       updateWindowSize()
     end
   end
@@ -502,7 +505,7 @@ function loadProjects()
   local p = reaper.EnumProjects(0)
   local i = 1
   while p do
-    projects[p] = {visited = false}
+    projects[p] = { visited = false }
     p = reaper.EnumProjects(i)
     i = i + 1
   end
@@ -513,7 +516,7 @@ local function setup()
   --parseAllTracks()
   --linkPairs=parseTracks(reaper.EnumProjects(-1))
   loadProjects()
-  projects[lastP] = {visited = true, links = parseTracks(lastP)}
+  projects[lastP] = { visited = true, links = parseTracks(lastP) }
   linkPairs = projects[lastP].links
 
   d = reaper.GetExtState(pluginName, "dock")
@@ -547,16 +550,15 @@ function checkForProjectChanges()
     tableSelection = nil --rimuovo selezione quando cambio prog per evitare selezione di traccia inesistente
     if projects[currP] then
       --tab changed
-      if not projects[currP].visited then 
-        projects[currP] = {visited = true, links = parseTracks(currP)}
+      if not projects[currP].visited then
+        projects[currP] = { visited = true, links = parseTracks(currP) }
       end
-
     else
       --new blank tab opened
-      projects[currP] = {visited = true, links = {}}
+      projects[currP] = { visited = true, links = {} }
     end
 
-    projects[lastP] = {visited = true, links = linkPairs}
+    projects[lastP] = { visited = true, links = linkPairs }
     linkPairs = projects[currP].links
 
     --reaper.ShowConsoleMsg("\n"..tprint(projects, 2))
@@ -566,7 +568,7 @@ function checkForProjectChanges()
   elseif currPName ~= lastPName then
     tableSelection = nil --rimuovo selezione quando cambio prog per evitare selezione di traccia inesistente
     --opened new project
-    projects[currP] = {visited = true, links = parseTracks(currP)}
+    projects[currP] = { visited = true, links = parseTracks(currP) }
     linkPairs = projects[currP].links
 
     lastPName = currPName
@@ -601,7 +603,7 @@ local function checkForProjectChanges()
   end
 end
 ]]
-   --
+--
 
 function drawLoop()
   checkForProjectChanges()

@@ -1,3 +1,5 @@
+-- @noindex
+
 
 local header = [[
 
@@ -32,7 +34,7 @@ end
 local trailer = [[
 -- <<<< ReaLink]]
 
-local startupFile = reaper.GetResourcePath().."/Scripts/__startup.lua"
+local startupFile = reaper.GetResourcePath() .. "/Scripts/__startup.lua"
 local read = io.open(startupFile, "r")
 local content = ""
 if read then
@@ -43,8 +45,8 @@ end
 local pattern = "%-%- >>>> ReaLink.*%-%- <<<< ReaLink"
 
 function removeTrailingNewlines(inputString)
-    local cleanedString = inputString:gsub("[\r\n]+$", "")
-    return cleanedString
+  local cleanedString = inputString:gsub("[\r\n]+$", "")
+  return cleanedString
 end
 
 local function addAutoStartup()
@@ -67,13 +69,14 @@ local function removeAutoStartup()
   write:close()
 end
 
-local commandID = ({reaper.get_action_context()})[4]
+local commandID = ({ reaper.get_action_context() })[4]
 local toggle = reaper.GetToggleCommandState(commandID) == 1
 
-if toggle then removeAutoStartup() 
-else addAutoStartup() end
+if toggle then
+  removeAutoStartup()
+else
+  addAutoStartup()
+end
 
-reaper.SetToggleCommandState(0,commandID, toggle and 0 or 1)
+reaper.SetToggleCommandState(0, commandID, toggle and 0 or 1)
 reaper.RefreshToolbar(commandID)
-
-
